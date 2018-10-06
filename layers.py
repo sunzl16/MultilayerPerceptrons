@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 class Layer(object):
@@ -29,11 +30,16 @@ class Relu(Layer):
 
     def forward(self, input):
         '''Your codes here'''
-        pass
+        relu_func = np.frompyfunc(lambda i: max(i,0.), 1, 1)
+        output = relu_func(input)
+        self._saved_for_backward(output.copy())
+        return output
 
     def backward(self, grad_output):
         '''Your codes here'''
-        pass
+        dRelu = self._saved_tensor[self._saved_tensor > 0.] = 1.
+        gradient = grad_output * dSigmod
+        return gradient
 
 
 class Sigmoid(Layer):
@@ -42,11 +48,22 @@ class Sigmoid(Layer):
 
     def forward(self, input):
         '''Your codes here'''
-        pass
+        sigmod_func = np.frompyfunc(lambda i: 1./(1.+math.exp(i)), 1, 1)
+        output = sigmod_func(input)
+        self._saved_for_backward(output.copy())
+        return output
 
     def backward(self, grad_output):
         '''Your codes here'''
-        pass
+        dSigmod = self._saved_tensor * (1 -self._saved_tensor)
+        gradient = grad_output * dSigmod
+        """
+        print("grad_output = ")
+        print(grad_output[0:10])
+        print("dSigmod = ")
+        print(dSigmod[0:10])
+        """
+        return gradient
 
 
 class Linear(Layer):
@@ -65,11 +82,26 @@ class Linear(Layer):
 
     def forward(self, input):
         '''Your codes here'''
-        pass
+        output = np.dot(input, self.W) + self.b
+        self._saved_for_backward(input.copy())
+        return output
 
     def backward(self, grad_output):
         '''Your codes here'''
-        pass
+        self.grad_W = np.dot(self._saved_tensor.T, grad_output) / grad_output.shape[0]
+        self.grad_b = np.mean(grad_output, axis=0)
+        gradient = np.dot(grad_output, self.W.T)
+        """
+        print("grad_output = ")
+        print(grad_output)
+        print("input = ")
+        print(self._saved_tensor)
+        print("grad_w = ")
+        print(self.grad_W)
+        print("grad_b = ")
+        print(self.grad_b)
+        """
+        return gradient
 
     def update(self, config):
         mm = config['momentum']

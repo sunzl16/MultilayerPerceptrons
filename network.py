@@ -12,7 +12,6 @@ class Network(object):
         output = input
         for i in range(self.num_layers):
             output = self.layer_list[i].forward(output)
-
         return output
 
     def backward(self, grad_output):

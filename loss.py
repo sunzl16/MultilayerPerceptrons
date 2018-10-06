@@ -8,8 +8,14 @@ class EuclideanLoss(object):
 
     def forward(self, input, target):
         '''Your codes here'''
-        pass
+        input[input > 0.5] = 1.
+        input[input <= 0.5] = 0.
+        loss_value = np.sum((target - input) ** 2 / 2.0)
+        return loss_value
 
     def backward(self, input, target):
         '''Your codes here'''
-        pass
+        input[input > 0.5] = 1.
+        input[input <= 0.5] = 0.
+        grad = target - input
+        return grad

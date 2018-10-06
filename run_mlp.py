@@ -5,12 +5,16 @@ from loss import EuclideanLoss
 from solve_net import train_net, test_net
 from load_data import load_mnist_2d
 
+
 train_data, test_data, train_label, test_label = load_mnist_2d('data')
 
 # Your model defintion here
 # You should explore different model architecture
 model = Network()
 model.add(Linear('fc1', 784, 10, 0.01))
+model.add(Sigmoid('fc2'))
+#model.add(Linear('fc3', 10, 10, 0.01))
+#model.add(Sigmoid('fc4'))
 
 loss = EuclideanLoss(name='loss')
 
@@ -21,13 +25,13 @@ loss = EuclideanLoss(name='loss')
 #       'disp_freq' denotes number of iterations in one epoch to display information.
 
 config = {
-    'learning_rate': 0.0,
+    'learning_rate': 0.01,
     'weight_decay': 0.0,
-    'momentum': 0.0,
+    'momentum': 0.9,
     'batch_size': 100,
     'max_epoch': 100,
     'disp_freq': 50,
-    'test_epoch': 5
+    'test_epoch': 1
 }
 
 
